@@ -4,7 +4,7 @@ import salutationsRouter from './src/routes/salutations.route.js';
 import { salutations,Ajoutersalut } from './src/models/salutations.model.js';
 // Créer une application express
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
 app.use('/', salutationsRouter);
 app.use(express.json());
 app.get('/', (req, res) => {
