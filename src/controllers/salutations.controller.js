@@ -36,9 +36,9 @@ const salut = async (req, res) => {
   
 }
 const plussalut = async (req, res) => {
-    const code = req.body.code_langue;
-    const langue= req.body.langue;
-    const message = req.body.message;
+    let code = req.body.code_langue;
+    let langue = req.body.langue;
+    let message = req.body.message;
     if(!req.body.code_langue){
         console.log("le paramètre du code de la langue est manquant");
     }
@@ -53,7 +53,11 @@ const plussalut = async (req, res) => {
 
             }
             else{
-                Ajoutersalut(code,langue,message);
+                const requete= `INSERT INTO salutations (code_langue,langue,message) VALUES (?,?,?)`;
+                const params= [code,langue,message];
+                db.query(requete, params, (erreur,resultats)=>{
+                        res.send("salutation entrer");
+                });
             }
         }
     }
