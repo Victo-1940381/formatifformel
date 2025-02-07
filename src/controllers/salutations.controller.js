@@ -1,42 +1,39 @@
+import salutationsModel from "../models/salutations.model.js";
 import  liste_salut  from "../models/salutations.model.js";
+import db from '../config/db.js';
+import url from 'url';
 const salut = async (req, res) => {
+    
      const params = url.parse(req.url, true).query; 
        const langue = params.code;
         let random =0;
-    if(langue){
-        if(salutations.some(e => e.code_langue == langue)){
-            if(langue == "fr"){
-                random = Math.floor(Math.random() * 4);
-                res.send(salutations[random]);
+        if (langue){
+        await salutationsModel.salut_code(langue)
+        .then((lan)=> {
+            if(!lan[0]){
+                res.status(404);
+                res.send({message: `code langue introuvable`});
+                return;
             }
-            else if(langue == "en"){
-                random = Math.floor((Math.random() * 4)+4);
-                res.send(salutations[random]);
-            }
-            else if(langue == "es"){
-                random = Math.floor((Math.random() * 4)+8);
-                res.send(salutations[random]);
-            }
-            else if(langue == "de"){
-                random = Math.floor((Math.random() * 4)+12);
-                res.send(salutations[random]);
-            }
+            let rep = lan;
+            let long= rep.length;
+            random = Math.floor(Math.random() * long)
+            res.send(lan[random]);
+         });
+        }
+        else {
+            await salutationsModel.liste_salut()
+            .then((pascode)=>{
+                let rep = pascode;
+                let long= rep.length;
+            random = Math.floor(Math.random() * long)
+            res.send(pascode[random]);
+            });
+        }
+                
             
-        }
-        else{
-             //   const erreur = {message: ""};
-               // const json = JSON.stringify(erreur);
-                res.send({message: "Erreur, le code de langue [" + langue + "] n'existe pas"});
-                res.statusCode =404;
-            }
         
-    }
-    else{
-       
-            random = Math.floor((Math.random() * 16));
-            res.send(salutations[random]);
-        }
-    
+  
 }
 const plussalut = async (req, res) => {
     const code = req.body.code_langue;
@@ -62,7 +59,10 @@ const plussalut = async (req, res) => {
     }
 }
 const liste = async (req, res) => {
- liste_salut[0];
+await salutationsModel.liste_salut()
+.then((salutations) => {
+    res.send(salutations);
+})
 }
 export{
     salut, plussalut, liste
